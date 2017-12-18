@@ -38,7 +38,7 @@ class FullyConnectedNN(NeuralNetwork):
 
         # Weight matrix and bias vectors for each layer
         self.params = {}
-        for l in range(1, self.L):
+        for l in range(1, self.L+1):
             self.params[f'W{l}'] = np.random.randn(self.n_x[l], self.n_x[l-1])
             self.params[f'b{l}'] = np.zeros(self.n_x[l]).reshape(-1, 1)
 
@@ -77,45 +77,49 @@ class FullyConnectedNN(NeuralNetwork):
         """
         pass
 
-    def _feed_forward(self, X):
+    def _forward(self, X):
         """
         One forward pass of data through the neural network, while storing
         essential information for backpropagation later.
         """
 
         # First input is simply our input data
-        self.cache['A1'] = X
+        self.cache['A0'] = X
 
-        for l in range(1, self.L):
+        for l in range(1, self.L+1):
             # Linear activation
             self.cache[f'Z{l}'] = np.dot(
                 self.params[f'W{l}'],
-                self.params[f'A{l-1}']
+                self.cache[f'A{l-1}']
             ) + self.params[f'b{l}']
 
             # Non-linear activation
             self.cache[f'A{l}'] = self.g[l].forward(self.cache[f'Z{l}'])
 
-    def _backprop(self, m):
+    def _backprop(self, X, Y):
         """
         One backward pass of data through the neural network, while storing
         the gradient updates required for the update step.
         """
 
-        # The input for the first step of backprop is the output of the
-        # forward propagation
-        self.grads[f'dA{self.L-1}'] = self.cache[f'A{self.L-1}']
+        assert X.shape[1] == Y.shape[1]
+        m = X.shape[1]
 
-        for l in reversed(range(1, self.L)):
+        # The input for the first step of backprop
+        AL = self.cache[f'A{self.L}']
+        self.grads[f'dA{self.L}'] = - (np.divide(Y, AL)
+                                       - np.divide(1 - Y, 1 - AL))
+
+        for l in reversed(range(1, self.L+1)):
             self.grads[f'dZ{l}'] = self.grads[f'dA{l}']\
-                * self.g[l].backward(self.cache[f'Z{l}'])
+                * self.g[l].backward(self.cache[f'Z{l}'], self.grads[f'dA{l}'])
             self.grads[f'dW{l}'] = (1 / m)\
-                * np.dot(self.grads['dZ{l}'], self.cache['A{l-1}'].T)
+                * np.dot(self.grads[f'dZ{l}'], self.cache[f'A{l-1}'].T)
             self.grads[f'db{l}'] = (1 / m)\
-                * np.sum(self.grads['dZ{l}'], axis=1, keepdims=True)
+                * np.sum(self.grads[f'dZ{l}'], axis=1, keepdims=True)
             self.grads[f'dA{l}'] = np.dot(
-                self.params['W{l}'].T,
-                self.grads['dZ{l}']
+                self.params[f'W{l}'].T,
+                self.grads[f'dZ{l}']
             )
 
 
