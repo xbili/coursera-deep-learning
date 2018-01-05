@@ -4,6 +4,7 @@ from nose.tools import eq_, ok_
 from implementations.models.fully_connected import FullyConnectedNN
 from implementations.activations.sigmoid import Sigmoid
 from implementations.cost_functions.log_loss import log_loss
+from implementations.tests.utils.gradient_check import gradient_check
 
 
 FEATURES = 3
@@ -62,7 +63,7 @@ def test_logistic_regression_forward_backward_prop():
     eq_(len(model.cache), 3)
 
     # Gradients should still be empty, not calculated yet.
-    ok_(not model.grads)
+    eq_(len(model.grads), 0)
 
     # Backprop
     model._backprop(X, Y)
@@ -82,7 +83,8 @@ def test_logistic_regression_forward_backward_prop():
     eq_(model.grads['dW1'].shape, (1, FEATURES))
     eq_(model.grads['db1'].shape, (1, 1))
 
-    # TODO: Gradient check here
+    # Perform a gradient check
+    ok_(gradient_check(X, Y, model))
 
 
 def test_L_nn_init():

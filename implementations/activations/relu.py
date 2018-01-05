@@ -9,7 +9,7 @@ class ReLU(object):
 
     def backward(self, z, dA):
         dZ = np.array(dA, copy=True)
-        dZ[z < 0] = 0
+        dZ[z < 0] = self.rectified
 
         assert dZ.shape == z.shape
 
