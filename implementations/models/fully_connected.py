@@ -39,6 +39,7 @@ class FullyConnectedNN(NeuralNetwork):
         # Weight matrix and bias vectors for each layer
         self.params = {}
         for l in range(1, self.L+1):
+            # TODO: Switch to specific initializers
             self.params[f'W{l}'] = np.random.randn(self.n_x[l], self.n_x[l-1])
             self.params[f'b{l}'] = np.zeros(self.n_x[l]).reshape(-1, 1)
 
