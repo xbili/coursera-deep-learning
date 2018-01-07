@@ -28,3 +28,25 @@ def init_shallow_neural_network(features, examples):
     model = FullyConnectedNN(features, hidden_layers, loss)
 
     return model
+
+
+def init_deep_neural_network(features, examples):
+    # 5 hidden layers
+    hidden_layers = [
+        (10, Sigmoid()),
+        (10, Sigmoid()),
+        (10, Sigmoid()),
+        (10, Sigmoid()),
+        (1, Sigmoid()),
+    ]
+
+    # Logistic loss
+    loss = log_loss
+
+    # Define model
+    model = FullyConnectedNN(features, hidden_layers, loss)
+
+    return model
+
+
+
