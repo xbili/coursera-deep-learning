@@ -5,7 +5,7 @@ class ReLU(object):
         self.rectified = rectified
 
     def forward(self, z):
-        return np.max(self.rectified, z)
+        return np.maximum(self.rectified, z)
 
     def backward(self, z, dA):
         dZ = np.array(dA, copy=True)

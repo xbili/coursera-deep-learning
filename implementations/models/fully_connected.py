@@ -10,12 +10,12 @@ class FullyConnectedNN(NeuralNetwork):
     neural network.
     """
 
-    def __init__(self, input_shape, hidden_layers, loss, *args, **kwargs):
+    def __init__(self, input_dim, hidden_layers, loss, *args, **kwargs):
         """
         Initializes the neural network with initial weights.
 
         Parameters:
-        - input_shape (tuple): shape of input matrix in the format:
+        - input_dim (int): number of features for the input:
             `(features, examples)` - note that training examples are stacked
             column-wise.
         - hidden_layers (List[tuples]): list of tuples representing the hidden
@@ -35,7 +35,7 @@ class FullyConnectedNN(NeuralNetwork):
 
         # Activation functions and units for each layer
         self.g = [lambda x: x] + [activation for _, activation in hidden_layers]
-        self.n_x = [input_shape[0]] + [n_x for n_x, _ in hidden_layers]
+        self.n_x = [input_dim] + [n_x for n_x, _ in hidden_layers]
         assert len(self.g) == len(self.n_x)
 
         # Weight matrix and bias vectors for each layer
@@ -143,7 +143,7 @@ class FullyConnectedNN(NeuralNetwork):
                 * np.dot(self.grads[f'dZ{l}'], self.cache[f'A{l-1}'].T)
             self.grads[f'db{l}'] = (1 / m)\
                 * np.sum(self.grads[f'dZ{l}'], axis=1, keepdims=True)
-            self.grads[f'dA{l}'] = np.dot(
+            self.grads[f'dA{l-1}'] = np.dot(
                 self.params[f'W{l}'].T,
                 self.grads[f'dZ{l}']
             )
