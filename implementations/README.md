@@ -17,13 +17,30 @@ Therefore I took the effort to reimplement some of the neural networks in the
 course to reinforce my understanding. Also adding a little bit more Python flair
 to it.
 
-## Getting Started
-
-WIP.
+The concepts from earlier courses are all implemented in `numpy`. Concepts
+learnt in course 4 onwards are mostly implemented in `tensorflow`.
 
 ## Tests
 
-WIP.
+Models implemented here are all unit tested with the aid of `nose` test package.
+Tests are complete with *gradient checking* - a useful concept that was
+introduced in the second course.
+
+The tests currently use randomly generated data. Work is in progress for data
+that makes more sense - like the ones that the course uses.
+
+To run the unit tests:
+
+```
+nosetests --verbose --with-coverage
+```
+
+A coverage report will also be generated. What I learnt from looking at the
+coverage report is that many times deep learning applications do not benefit
+much from code coverage reports since there aren't many branches of execution.
+
+But still it is used as an indication of how much code is tested for these
+implementations.
 
 ## Contributing
 
