@@ -4,6 +4,7 @@ from nose.tools import eq_, ok_
 from implementations.models.fully_connected import FullyConnectedNN
 from implementations.activations.sigmoid import Sigmoid
 from implementations.cost_functions.log_loss import log_loss
+from implementations.optimizers.gradient_descent import GradientDescent
 from implementations.tests.utils.gradient_check import gradient_check
 from implementations.tests.utils.init_test_models import init_logistic_regression
 from implementations.tests.utils.init_test_data import generate_classification_data
@@ -87,3 +88,15 @@ def test_logistic_regression_forward_backward_prop():
 
     # Perform a gradient check
     ok_(gradient_check(X, Y, model))
+
+
+def test_logistic_regression_gradient_descent():
+    """Tests a basic gradient descent application on logistic regression."""
+    X, Y = generate_classification_data(FEATURES, EXAMPLES)
+
+    model = init_logistic_regression(FEATURES, EXAMPLES)
+    losses = model.fit(X, Y, epochs=20, optimizer=GradientDescent(learning_rate=0.01))
+
+    prev = float('inf')
+    for loss in losses:
+        ok_(loss <= prev)

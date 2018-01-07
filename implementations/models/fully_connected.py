@@ -1,6 +1,8 @@
 import numpy as np
 
-from .neural_network import NeuralNetwork
+from implementations.models.neural_network import NeuralNetwork
+from implementations.data_utils.minibatch_generator import minibatch_generator
+
 
 class FullyConnectedNN(NeuralNetwork):
     """
@@ -60,11 +62,34 @@ class FullyConnectedNN(NeuralNetwork):
         return '\n'.join(weights)
 
 
-    def fit(self, X, y, batch_size=32, optimizer=None):
+    def fit(self, X, Y, epochs=10, batch_size=32, optimizer=None):
         """
         Trains the neural network with the specified optimization algorithm.
+
+        Returns the loss history in each iteration.
         """
-        pass
+
+        assert optimizer != None
+
+        losses = []
+
+        for epoch in range(epochs):
+            for minibatch_X, minibatch_Y in minibatch_generator(X, Y, batch_size):
+                self._forward(minibatch_X)
+                self._backprop(minibatch_X, minibatch_Y)
+                self.params = optimizer.update(self.params, self.grads)
+                self._clear_cache()
+
+            # Evaluate loss after every epoch
+            self._forward(X)
+            loss = self.J(self.cache[f'A{self.L}'], Y)
+            self._clear_cache()
+
+            losses += [loss]
+
+            print(f'Epoch #{epoch} loss: {loss}')
+
+        return losses
 
     def predict(self, X, batch_size=32, optimizer=None):
         """
@@ -130,4 +155,3 @@ class FullyConnectedNN(NeuralNetwork):
         """
         self.cache = {}
         self.grads = {}
-        self.params = {}
