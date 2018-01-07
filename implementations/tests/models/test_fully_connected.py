@@ -6,6 +6,7 @@ from implementations.activations.sigmoid import Sigmoid
 from implementations.cost_functions.log_loss import log_loss
 from implementations.tests.utils.gradient_check import gradient_check
 from implementations.tests.utils.init_test_models import init_logistic_regression
+from implementations.tests.utils.init_test_data import generate_classification_data
 
 
 FEATURES = 3
@@ -41,9 +42,9 @@ def test_logistic_regression_init():
 
 
 def test_logistic_regression_forward_backward_prop():
-    # Random training inputs
-    X = np.random.randn(FEATURES, EXAMPLES)
-    Y = np.random.randn(1, EXAMPLES) < 0.5
+    """Tests a single forward and backward propagation iteration."""
+
+    X, Y = generate_classification_data(FEATURES, examples=EXAMPLES)
 
     # Feedforward step
     model = init_logistic_regression(FEATURES, EXAMPLES)
@@ -86,15 +87,3 @@ def test_logistic_regression_forward_backward_prop():
 
     # Perform a gradient check
     ok_(gradient_check(X, Y, model))
-
-
-def test_L_nn_init():
-    pass
-
-
-def test_L_nn_forward_prop():
-    pass
-
-
-def test_L_nn_backward_prop():
-    pass
